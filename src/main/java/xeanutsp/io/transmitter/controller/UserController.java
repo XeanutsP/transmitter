@@ -1,12 +1,14 @@
 package xeanutsp.io.transmitter.controller;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
+import xeanutsp.io.transmitter.entity.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.websocket.server.PathParam;
+import xeanutsp.io.transmitter.service.UsersService;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,31 +17,36 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class UserController {
+    
+    private final UsersService usersService;
+
+    public UserController(UsersService usersService) {
+        this.usersService = usersService;
+    }
+
     @GetMapping("/user/{id}")
     public User getUsers(@PathParam("id") Long id, @RequestParam User param) {
         if (id != null) {
-            // fetch user from database
+            return usersService.getUser(id);
         } else {
-            // return all users
+            return usersService.getAllUsers();
         }
-        return param;
     }
 
     @PostMapping("/user")
-    public String addUser(@RequestBody String entity) {
-
-        return entity;
+    public User addUser(@RequestBody User user) {
+        return usersService.addUser(user);
     }
 
     @PutMapping("user/{id}")
     public User putMethodName(@PathVariable Long id, @RequestBody User entity) {
         
-        return entity;
+        return usersService.updateUser(id, entity);
     }
 
     @DeleteMapping("user/{id}")
     public void deleteUser(@PathVariable Long id) {
-        
+        usersService.deleteUser(id);
     }
 
 }
